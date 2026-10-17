@@ -1,0 +1,67 @@
+# Threat Intelligence Tool Analysis
+
+## 1. VirusTotal
+- Indicator tested: http://example.com/
+- Detection result: 0/93
+- HTTP status: 200
+- Observation: HTTP redirects to HTTPS.
+- Assessment: No vendor detections shown in the captured report.
+- Limitation: A zero-detection result does not prove a URL is safe.
+
+## 2. URLScan.io
+- Domain: example.com
+- IP address shown: 172.66.147.243
+- Domains contacted: 1
+- IPs contacted: 1
+- URLScan verdict: No classification.
+- Assessment: The report provides technical information but does not establish malicious activity.
+
+## 3. Conclusion
+These results document practice with VirusTotal and URLScan using a reserved example domain. They are not evidence that the fictional phishing email is malicious.
+
+Next action: Analyze appropriate training indicators and record their actual results before assigning a final verdict.
+
+## VirusTotal Domain Investigation — Training Email
+
+### gyazo.com
+- Detection ratio: 1/92
+- Observation: One security vendor flagged the domain as malicious.
+- Assessment: Weak suspicious signal; requires corroboration.
+- Verdict: Domain-level result is inconclusive.
+
+### fanlink.to
+- Detection ratio: 2/92
+- Observation: Two security vendors flagged the domain, including a phishing classification.
+- Assessment: Requires investigation of the specific URL and its context.
+- Verdict: Domain-level result is inconclusive.
+
+### Limitations
+- These are domain-level results, not confirmed verdicts for the exact email URLs.
+- Vendor detections can be false positives.
+- The email's final classification remains under investigation.
+
+### Evidence
+- screenshots/04-virustotal-gyazo.png
+- screenshots/05-virustotal-fanlink.png
+
+## Exact URL Investigation — VirusTotal
+
+- Indicator: https://fanlink.to/tFR28R
+- Source: VirusTotal
+- Detection ratio: 4/92
+- Finding: Four of 92 security vendors flagged the exact URL.
+- Assessment: Suspicious URL requiring further investigation.
+- Limitation: Vendor detections may include false positives. The result alone does not establish the final verdict.
+- Safety: The destination was not opened.
+
+## URLScan Investigation — Exact Fanlink URL
+
+- Indicator: hxxps://fanlink[.]to/tFR28R
+- Exact URL scan: Never scanned
+- Existing hostname scans: 3
+- Most recent hostname scan: 8 days ago
+- Hostname verdicts: No malicious verdicts displayed in the screenshot
+- Assessment: Exact URL remains unassessed by URLScan.
+- Limitation: Hostname scan history does not establish the safety of the exact URL.
+- Action: No new public scan submitted.
+- Evidence: screenshots/06-urlscan-fanlink-exact-url.png

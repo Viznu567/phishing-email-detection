@@ -1,0 +1,20 @@
+# Python virtual environments
+.venv/
+venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Private credentials and environment variables
+.env
+credentials.json
+token.json
+
+# Local monitoring logs
+logs/
+
+# Raw training email - keep private
+samples/sample-real-training.emlsrc/gmail_monitor_backup.py
+src/gmail_monitor_backup.py
+/samples/sample-real-training.eml

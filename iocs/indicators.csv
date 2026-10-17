@@ -1,0 +1,11 @@
+
+
+Indicator_Type,Indicator_Value,Source,Finding,Confidence
+Email,accounts@iinet.net.au,Email Header,Claimed sender and recipient address,Low
+IP,203.59.1.107,Authentication-Results,IP reported by SPF result,Unverified
+URL,hxxps://i[.]gyazo[.]com/513346e2325fbe72b51116e044eb5889[.]jpg,HTML Body,Defanged image URL,Unverified
+URL,hxxps://fanlink[.]to/tFR28R,HTML Body,Defanged hyperlink,Unverified
+Domain,gyazo.com,Extracted URL,Image hosting domain,Unverified
+Domain,fanlink.to,Extracted URL,Link destination domain,Unverified
+
+URL,https://fanlink.to/tFR28R,VirusTotal,Exact URL flagged by 4 of 92 vendors,Moderate

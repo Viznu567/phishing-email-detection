@@ -1,0 +1,24 @@
+From: Account Security Team <security@example-training.test>
+To: analyst@example.test
+Date: Thu, 15 Oct 2026 10:00:00 +0000
+Subject: Urgent: Verify Your Account
+Reply-To: support@unrelated-training.test
+Message-ID: <training-001@example-training.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Authentication-Results: mx.example.test;
+    spf=fail;
+    dkim=fail;
+    dmarc=fail
+
+Dear Customer,
+
+Your account requires immediate verification.
+Please review your account details using the link below:
+
+http://account-verification.example-training.test/login
+
+If you do not respond, your account may be restricted.
+
+Regards,
+Account Security Team

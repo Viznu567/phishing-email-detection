@@ -1,0 +1,24 @@
+# Email Header Analysis
+
+Project: Phishing Email Analysis and Incident Report
+
+## Sample Information
+- Sample: sample-phishing.eml
+- Type: Fictional training email
+- Subject: Urgent: Verify Your Account
+
+## Findings
+1. The From address claims to represent an account security team.
+2. The Reply-To address uses a different domain.
+3. SPF is shown as fail in the illustrative Authentication-Results header.
+4. DKIM is shown as fail in the illustrative Authentication-Results header.
+5. DMARC is shown as fail in the illustrative Authentication-Results header.
+6. The subject and message body use urgency to encourage account verification.
+
+## Preliminary Assessment
+The sample contains several suspicious characteristics and should be treated as a phishing-style training example.
+
+Note: The email and authentication results are fictional. No live sender or domain verification has been performed.
+
+## Next Step
+Investigate extracted URLs and indicators using approved threat-intelligence tools when real, safe training indicators are available.
