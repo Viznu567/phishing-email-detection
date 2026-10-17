@@ -1,4 +1,25 @@
+# Phishing Email Detection
 
+A Python prototype that monitors a Gmail inbox, scores incoming emails for phishing risk using rule-based checks, and shows the alerts in a Streamlit security dashboard.
+
+![Dashboard screenshot](docs/dashboard.png)
+
+## Overview
+
+Phishing emails are one of the most common ways attackers reach an organization. This project explores how a basic detection pipeline works: it reads emails through the Gmail API, checks warning signs in the headers, links, and attachment filenames, adds up a risk score, and records an alert with the details so an analyst can review it.
+
+## How it works
+
+1. **Monitor:** `gmail_monitor.py` checks the Gmail inbox periodically using OAuth.
+2. **Analyze:** each email is checked for suspicious indicators in its headers, URLs, and attachment filenames.
+3. **Score:** rule-based checks produce a phishing risk score.
+4. **Enrich (optional):** domains found in the email can be looked up on VirusTotal for reputation.
+5. **Alert and log:** results are saved as JSON Lines, and desktop notifications can be shown.
+6. **Review:** `dashboard.py` presents the alerts in a Streamlit dashboard with charts, filters, and CSV export.
+
+## Tech stack
+
+Python · Gmail API · VirusTotal API · Streamlit
 ## Installation
 
 ### Requirements
