@@ -1,64 +1,76 @@
-# Phishing Email Analysis and Incident Report
 
-## Overview
+## Installation
 
-A cybersecurity training project demonstrating phishing email triage, email-header inspection, IOC extraction, threat-intelligence lookups, and incident report preparation. It also includes an offline detector for analyzing saved `.eml` messages or watching a local demo folder for new messages.
+### Requirements
+- Python 3.13 or a compatible Python version
+- A Google account with Gmail API access
+- A VirusTotal API key (optional)
 
-## Run the local detector
+### 1. Clone the repository
 
-Requires Python 3.10 or newer. It uses only the Python standard library; no extra application or package installation is required. Open this folder in VS Code and run these commands in its terminal:
-
-```powershell
-python src/phishing_detector.py --file samples/sample-phishing.eml
+```bash
+git clone https://github.com/Viznu567/phishing-email-detection.git
+cd phishing-email-detection
 ```
 
-To monitor a local folder for incoming `.eml` files, run:
+### 2. Create a virtual environment
 
-```powershell
-python src/phishing_detector.py --watch demo-inbox --output reports/demo-results.jsonl
+Windows:
+
+```cmd
+py -m venv .venv
+.venv\Scripts\activate
+python -m pip install -r requirements.txt
 ```
 
-Copy a saved `.eml` file into `demo-inbox` to see its analysis. Stop with Ctrl+C. Results are appended to the JSON Lines report. The detector checks sender and Reply-To domain mismatches, authentication failures recorded in message headers, pressure wording, links, and punycode hostnames. It does not open links, query reputation services, or connect to Outlook/Gmail. Its risk score is a triage hint, not a verdict.
+### 3. Configure Gmail API access
 
-## Tools
+Enable the Gmail API in Google Cloud Console and configure OAuth credentials for a desktop application.
 
-- Email header inspection
-- VirusTotal
-- URLScan.io
-- VS Code terminal / Windows PowerShell
-- Python standard library
-- CSV and Markdown
+Place your downloaded OAuth client file in the project root as `credentials.json`. Authorize the application when prompted. The program may create `token.json` locally.
 
-## Investigation Activities
+Use only an account you are authorized to monitor.
 
-- Examined sender and Reply-To fields.
-- Reviewed illustrative SPF, DKIM, and DMARC results.
-- Extracted email and URL indicators.
-- Practised threat-intelligence lookups.
-- Documented findings, uncertainty, and recommended remediation.
+### 4. Configure VirusTotal (optional)
 
-## Project Structure
+Create a local `.env` file in the project root and add your VirusTotal API key using the environment variable name expected by the application code.
 
-- `samples/` — Training email
-- `screenshots/` — Tool evidence
-- `reports/` — Analysis and incident reports
-- `iocs/` — Extracted indicators
-- `src/phishing_detector.py` — Offline `.eml` analyzer and local folder watcher
-- `demo-inbox/` — Created automatically when folder watching starts
+Never publish your API key, `credentials.json`, or `token.json`.
 
-## Safety and Limitations
+## Running the Project
 
-The initial email is fictional and uses reserved training domains. The example.com scans demonstrate tool usage only. No real malicious activity was confirmed. The local folder watcher is not connected to a live mail service. Real mailbox integration requires selecting a provider and configuring its authorized access method; offline scores should not automatically block, quarantine, or delete messages.
+### Start Gmail monitoring
 
-## Skills Demonstrated
+```cmd
+python src\gmail_monitor.py
+```
 
-- Phishing email triage
-- Email header analysis
-- IOC extraction
-- Threat-intelligence research
-- Incident documentation
-- Security awareness and remediation
+The monitor checks the Gmail inbox periodically, analyzes available email indicators, records alerts, and may display desktop notifications.
 
-## Disclaimer
+### Start the dashboard
 
-This project is intended for cybersecurity education and defensive analysis.
+Open a second terminal, activate the virtual environment, and run:
+
+```cmd
+python -m streamlit run src\dashboard.py
+```
+
+Open the local URL displayed in the terminal, normally `http://localhost:8501`.
+
+Alternatively, on Windows, double-click `start_phishing_project.bat` in the project root to start both programs.
+
+## Features
+
+- Gmail inbox monitoring using OAuth authorization
+- Rule-based phishing risk scoring
+- Email header, URL, and attachment-filename checks
+- Optional VirusTotal domain reputation lookups
+- Desktop alerts and JSON Lines logging
+- Streamlit dashboard with automatic refresh, charts, filters, and CSV export
+- Markdown monitoring and evaluation reports
+
+## Limitations
+
+This is an educational security-monitoring prototype, not a guaranteed phishing blocker. It does not quarantine emails, and filename checks do not scan attachment contents. Detection may miss phishing messages or flag legitimate ones. VirusTotal results are reputation signals, not proof that a message is malicious or safe.
+
+Keep API keys, OAuth credentials, tokens, private email content, and monitoring logs out of public repositories.

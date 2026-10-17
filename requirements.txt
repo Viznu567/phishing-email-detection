@@ -1,0 +1,9 @@
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+requests
+python-dotenv
+streamlit
+streamlit-autorefresh
+pandas
+altair

@@ -1,8 +1,12 @@
-import json
-from pathlib import Path
-
 import pandas as pd
 import streamlit as st
+import json
+from streamlit_autorefresh import st_autorefresh
+from pathlib import Path
+from datetime import datetime
+import pandas as pd
+import streamlit as st
+import altair as alt
 
 
 # Project paths
@@ -17,6 +21,16 @@ st.set_page_config(
 
 st.title("🛡️ Phishing Email Security Dashboard")
 st.caption("Email risk monitoring and security alerts")
+st_autorefresh(
+    interval=30_000,
+    key="dashboard_autorefresh"
+)
+st.caption(
+    "Dashboard page refreshed at: "
+    + datetime.now().astimezone().strftime("%I:%M:%S %p")
+)
+
+st.caption("Dashboard refreshes automatically every 30 seconds.")
 
 
 def load_alerts():
@@ -87,6 +101,17 @@ def get_virustotal_status(record):
 
 
 alerts, error_message = load_alerts()
+if ALERTS_FILE.exists():
+    updated_at = datetime.fromtimestamp(
+        ALERTS_FILE.stat().st_mtime
+    ).astimezone()
+
+    st.caption(
+        "Alert log last updated: "
+        + updated_at.strftime("%d %b %Y, %I:%M:%S %p %Z")
+    )
+else:
+    st.caption("Alert log has not been created yet.")
 
 if error_message:
     st.info(error_message)
@@ -122,8 +147,14 @@ for alert in alerts:
 
     rows.append(
         {
-            "Time": alert.get("timestamp", alert.get("time", "Unknown")),
-            "Sender": alert.get("sender", "Unknown"),
+           "Time": alert.get(
+    "time_utc",
+    alert.get("timestamp", alert.get("time", "Unknown"))
+),
+"Sender": alert.get(
+    "from",
+    alert.get("sender", "Unknown")
+),
             "Subject": alert.get("subject", "No subject"),
             "Risk": get_risk(alert),
             "Score": score,
@@ -144,6 +175,66 @@ col1, col2, col3 = st.columns(3)
 col1.metric("Emails Recorded", total_alerts)
 col2.metric("Emails Requiring Review", review_count)
 col3.metric("Higher-Risk Scores", higher_risk_count)
+def show_vertical_bar_chart(series):
+    chart_data = pd.DataFrame({
+        "Name": [str(name) for name in series.index],
+        "Count": series.values,
+    })
+
+    chart = (
+        alt.Chart(chart_data)
+        .mark_bar()
+        .encode(
+            x=alt.X(
+                "Name:N",
+                sort=None,
+                axis=alt.Axis(labelAngle=0, labelLimit=500),
+            ),
+            y=alt.Y("Count:Q", title=None),
+            tooltip=["Name", "Count"],
+        )
+        .properties(height=300)
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+# Threat analytics
+st.subheader("📊 Threat Analytics")
+
+chart_col1, chart_col2 = st.columns(2)
+
+with chart_col1:
+    st.markdown("**Risk label distribution**")
+
+    risk_counts = pd.Series(
+        [row["Risk"] for row in rows],
+        name="Emails"
+    ).value_counts()
+
+    show_vertical_bar_chart(risk_counts)
+
+with chart_col2:
+    st.markdown("**Risk score distribution**")
+
+    score_counts = pd.Series(
+        [row["Score"] for row in rows],
+        name="Emails"
+    ).value_counts().sort_index()
+
+    show_vertical_bar_chart(score_counts)
+
+st.markdown("**Most common detection findings**")
+
+all_findings = [
+    str(finding)
+    for row in rows
+    for finding in row["Findings"]
+]
+
+if all_findings:
+    finding_counts = pd.Series(all_findings).value_counts().head(8)
+    show_vertical_bar_chart(finding_counts)
+else:
+    st.info("No detection findings are recorded in the current alerts.")
 
 st.divider()
 
@@ -188,6 +279,17 @@ st.dataframe(
     pd.DataFrame(display_rows),
     use_container_width=True,
     hide_index=True,
+)
+# Export the currently filtered email records
+csv_data = pd.DataFrame(display_rows).to_csv(
+    index=False
+).encode("utf-8-sig")
+
+st.download_button(
+    label="📥 Download email records as CSV",
+    data=csv_data,
+    file_name="phishing_email_alerts.csv",
+    mime="text/csv",
 )
 
 # Detailed investigation view
