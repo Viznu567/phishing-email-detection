@@ -2,7 +2,9 @@
 
 A Python prototype that monitors a Gmail inbox, scores incoming emails for phishing risk using rule-based checks, and shows the alerts in a Streamlit security dashboard.
 
-![Dashboard screenshot](docs/dashboard.png)
+<img width="1920" height="1080" alt="dashboard png" src="https://github.com/user-attachments/assets/f7fa205f-943d-411b-ae3b-d244c4fb57e3" />
+
+
 
 ## Overview
 
