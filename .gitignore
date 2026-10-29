@@ -19,3 +19,8 @@ src/gmail_monitor_backup.py
 
 # Raw training email - keep private
 /samples/sample-real-training.eml
+
+# Google OAuth credentials and tokens
+credentials.json
+token.json
+client_secret_*.json
