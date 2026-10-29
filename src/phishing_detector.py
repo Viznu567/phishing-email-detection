@@ -11,10 +11,21 @@ from datetime import datetime, timezone
 from email import policy
 from email.parser import BytesParser
 from pathlib import Path
+import ipaddress
 from urllib.parse import urlsplit
 
 
 URL_RE = re.compile(r"https?://[^\s<>\]\[\"'()]+", re.IGNORECASE)
+SHORTENERS = {
+    "bit.ly",
+    "tinyurl.com",
+    "t.co",
+    "is.gd",
+    "buff.ly",
+    "ow.ly",
+    "cutt.ly",
+    "rebrand.ly",
+}
 URGENCY_RE = re.compile(
     r"\b(urgent|immediately|verify your account|account (?:will be|is) (?:suspended|restricted)|"
     r"act now|password expires|payment overdue)\b",
@@ -69,11 +80,38 @@ def analyze(path: Path) -> dict:
         flag(1, "Contains clickable URLs", f"Found {len(urls)} URL(s); destinations were not opened or checked online.")
     for url in urls:
         try:
-            host = urlsplit(url).hostname or ""
+            host = (urlsplit(url).hostname or "").lower().rstrip(".")
         except ValueError:
             host = ""
-        if host and (host.startswith("xn--") or ".xn--" in host):
-            flag(2, "Internationalized domain", f"URL uses a punycode hostname: {host}")
+
+        if not host:
+            continue
+
+        if host.startswith("xn--") or ".xn--" in host:
+            flag(
+                2,
+                "Internationalized domain",
+                f"URL uses a punycode hostname: {host}",
+            )
+
+        try:
+            ipaddress.ip_address(host)
+        except ValueError:
+            pass
+        else:
+            flag(
+                2,
+                "IP-address URL",
+                f"URL uses an IP address instead of a domain: {host}",
+            )
+
+        if host in SHORTENERS:
+            flag(
+                2,
+                "Known URL shortener",
+                f"URL uses a known shortening service: {host}",
+            )
+
 
     level = "high" if score >= 5 else "medium" if score >= 3 else "low"
     return {

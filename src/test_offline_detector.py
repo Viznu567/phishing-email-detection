@@ -112,6 +112,74 @@ class OfflineDetectorTests(unittest.TestCase):
             )
             self.assertIn("Score: 0", result.stdout)
             self.assertIn("No configured warning signals found.", result.stdout)
+    def test_ip_address_url_is_flagged(self):
+        email = (
+            "From: sender@example.test\n"
+            "To: analyst@example.test\n"
+            "Subject: Review this page\n"
+            "Content-Type: text/plain; charset=UTF-8\n"
+            "\n"
+            "Please review http://192.0.2.10/login\n"
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            email_file = Path(temp_dir) / "ip_url.eml"
+            email_file.write_text(email, encoding="utf-8")
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(DETECTOR),
+                    "--file",
+                    str(email_file),
+                ],
+                cwd=PROJECT_DIR,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(
+            result.returncode,
+            0,
+            msg=f"Detector failed:\n{result.stderr}",
+        )
+        self.assertIn("IP-address URL", result.stdout)
+
+    def test_known_url_shortener_is_flagged(self):
+        email = (
+            "From: sender@example.test\n"
+            "To: analyst@example.test\n"
+            "Subject: Shared resource\n"
+            "Content-Type: text/plain; charset=UTF-8\n"
+            "\n"
+            "Please review https://bit.ly/example-test\n"
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            email_file = Path(temp_dir) / "short_url.eml"
+            email_file.write_text(email, encoding="utf-8")
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(DETECTOR),
+                    "--file",
+                    str(email_file),
+                ],
+                cwd=PROJECT_DIR,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(
+            result.returncode,
+            0,
+            msg=f"Detector failed:\n{result.stderr}",
+        )
+        self.assertIn("Known URL shortener", result.stdout)
+
 
 
 
