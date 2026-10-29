@@ -112,6 +112,41 @@ class OfflineDetectorTests(unittest.TestCase):
             )
             self.assertIn("Score: 0", result.stdout)
             self.assertIn("No configured warning signals found.", result.stdout)
+    def test_ordinary_url_alone_is_not_high_risk(self):
+        email = (
+            "From: colleague@example.test\n"
+            "To: analyst@example.test\n"
+            "Subject: Team meeting information\n"
+            "Content-Type: text/plain; charset=UTF-8\n"
+            "\n"
+            "Here is the meeting information: "
+            "https://www.example.test/meeting\n"
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            email_file = Path(temp_dir) / "ordinary_url.eml"
+            email_file.write_text(email, encoding="utf-8")
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(DETECTOR),
+                    "--file",
+                    str(email_file),
+                ],
+                cwd=PROJECT_DIR,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(
+            result.returncode,
+            0,
+            msg=f"Detector failed:\n{result.stderr}",
+        )
+        self.assertNotIn("[HIGH]", result.stdout)
+        self.assertIn("Contains clickable URLs", result.stdout)
     def test_ip_address_url_is_flagged(self):
         email = (
             "From: sender@example.test\n"
