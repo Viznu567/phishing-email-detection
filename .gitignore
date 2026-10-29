@@ -14,7 +14,8 @@ token.json
 # Local monitoring logs
 logs/
 
-# Raw training email - keep private
-samples/sample-real-training.emlsrc/gmail_monitor_backup.py
+# Local backup files
 src/gmail_monitor_backup.py
+
+# Raw training email - keep private
 /samples/sample-real-training.eml
